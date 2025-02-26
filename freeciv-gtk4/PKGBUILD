@@ -1,0 +1,61 @@
+# Maintainer: Levente Polyak <anthraxx[at]archlinux[dot]org>
+# Maintainer: Carl Smedstad <carsme@archlinux.org>
+# Contributor: Eric Bélanger <eric@archlinux.org>
+# Modified by: elderica
+
+pkgbase=freeciv
+pkgname=freeciv-gtk4
+pkgver=3.1.4
+pkgrel=1
+_pkgdesc="A multiuser clone of the famous Microprose game of Civilization"
+pkgdesc="${_pkgdesc} (GTK4 client with Rule editor)"
+arch=('x86_64')
+url="http://www.freeciv.org/"
+license=('GPL-2.0-or-later')
+depends=(
+  'bzip2'
+  'cairo'
+  'curl'
+  'gdk-pixbuf2'
+  'glib2'
+  'glibc'
+  'gtk4'
+  'qt6-base'
+  'hicolor-icon-theme'
+  'icu'
+  'libtool'
+  'lua'
+  'pango'
+  'readline'
+  'sdl2_mixer'
+  'sdl2-compat'
+  'sqlite'
+  'xz'
+  'zlib'
+  'zstd'
+)
+makedepends=('python')
+conflicts=('freeciv')
+backup=('etc/freeciv/database.lua')
+source=("https://downloads.sourceforge.net/sourceforge/${pkgbase}/${pkgbase}-${pkgver}.tar.xz")
+sha512sums=('71a4220c3d6cd3771d5f039a50932d0f80f9ca829821d778fe2bc16609110d8ab3b13b9483b3bb0e6860557f68e53d308865139224ae814dc5366e7fcf154a23')
+
+build() {
+  cd ${srcdir}/${pkgbase}-${pkgver}
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --enable-shared \
+    --enable-sys-lua \
+    --enable-client=gtk4 \
+    --enable-fcmp=gtk4 \
+    --enable-fcdb=sqlite3 \
+    --enable-ruledit=yes \
+    --enable-aimodules
+  make
+}
+
+package() {
+  cd ${srcdir}/${pkgbase}-${pkgver}  
+  make DESTDIR="${pkgdir}" install
+}
