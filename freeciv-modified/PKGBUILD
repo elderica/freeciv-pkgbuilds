@@ -4,11 +4,10 @@
 # Modified by: elderica
 
 pkgbase=freeciv
-pkgname=freeciv-gtk4
+pkgname=freeciv
 pkgver=3.1.4
-pkgrel=1
-_pkgdesc="A multiuser clone of the famous Microprose game of Civilization"
-pkgdesc="${_pkgdesc} (GTK4 client with Rule editor)"
+pkgrel=4
+pkgdesc="A multiuser clone of the famous Microprose game of Civilization (major clients with rule editor)"
 arch=('x86_64')
 url="http://www.freeciv.org/"
 license=('GPL-2.0-or-later')
@@ -19,6 +18,7 @@ depends=(
   'gdk-pixbuf2'
   'glib2'
   'glibc'
+  'gtk3'
   'gtk4'
   'qt6-base'
   'hicolor-icon-theme'
@@ -35,27 +35,31 @@ depends=(
   'zstd'
 )
 makedepends=('python')
-conflicts=('freeciv')
+groups=('modified')
+replaces=('freeciv-gtk4')
 backup=('etc/freeciv/database.lua')
+options=(strip docs staticlibs)
 source=("https://downloads.sourceforge.net/sourceforge/${pkgbase}/${pkgbase}-${pkgver}.tar.xz")
 sha512sums=('71a4220c3d6cd3771d5f039a50932d0f80f9ca829821d778fe2bc16609110d8ab3b13b9483b3bb0e6860557f68e53d308865139224ae814dc5366e7fcf154a23')
 
 build() {
-  cd ${srcdir}/${pkgbase}-${pkgver}
+  cd "${srcdir}/${pkgbase}-${pkgver}" || exit 1
   ./configure \
     --prefix=/usr \
     --sysconfdir=/etc \
-    --enable-shared \
-    --enable-sys-lua \
-    --enable-client=gtk4 \
-    --enable-fcmp=gtk4 \
+    --disable-silent-rules \
+    --enable-shared=yes \
+    --enable-sys-lua=yes \
+    --enable-client=gtk3.22,gtk4,qt \
+    --enable-fcmp=gtk3,gtk4,qt,cli \
     --enable-fcdb=sqlite3 \
     --enable-ruledit=yes \
-    --enable-aimodules
-  make
+    --enable-aimodules=yes \
+    --with-missinglist
+  make -j
 }
 
 package() {
-  cd ${srcdir}/${pkgbase}-${pkgver}  
+  cd "${srcdir}/${pkgbase}-${pkgver}" || exit
   make DESTDIR="${pkgdir}" install
 }
