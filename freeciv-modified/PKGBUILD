@@ -5,8 +5,8 @@
 
 pkgbase=freeciv
 pkgname=freeciv
-pkgver=3.1.4
-pkgrel=4
+pkgver=3.1.5
+pkgrel=1
 pkgdesc="A multiuser clone of the famous Microprose game of Civilization (major clients with rule editor)"
 arch=('x86_64')
 url="http://www.freeciv.org/"
@@ -19,7 +19,6 @@ depends=(
   'glib2'
   'glibc'
   'gtk3'
-  'gtk4'
   'qt6-base'
   'hicolor-icon-theme'
   'icu'
@@ -36,11 +35,10 @@ depends=(
 )
 makedepends=('python')
 groups=('modified')
-replaces=('freeciv-gtk4')
 backup=('etc/freeciv/database.lua')
-options=(strip docs staticlibs)
+options=(strip docs staticlibs !lto)
 source=("https://downloads.sourceforge.net/sourceforge/${pkgbase}/${pkgbase}-${pkgver}.tar.xz")
-sha512sums=('71a4220c3d6cd3771d5f039a50932d0f80f9ca829821d778fe2bc16609110d8ab3b13b9483b3bb0e6860557f68e53d308865139224ae814dc5366e7fcf154a23')
+sha512sums=('117c92300cffdf517d668243758d97f4457cda5511a8493c69530811d5e6e511ac40254069490b409466e9c35eb528dd3f1c10c46ff4730537445e21506c6b5c')
 
 build() {
   cd "${srcdir}/${pkgbase}-${pkgver}" || exit 1
@@ -50,8 +48,8 @@ build() {
     --disable-silent-rules \
     --enable-shared=yes \
     --enable-sys-lua=yes \
-    --enable-client=gtk3.22,gtk4,qt \
-    --enable-fcmp=gtk3,gtk4,qt,cli \
+    --enable-client=gtk3.22,qt \
+    --enable-fcmp=qt,cli \
     --enable-fcdb=sqlite3 \
     --enable-ruledit=yes \
     --enable-aimodules=yes \
@@ -63,3 +61,4 @@ package() {
   cd "${srcdir}/${pkgbase}-${pkgver}" || exit
   make DESTDIR="${pkgdir}" install
 }
+
